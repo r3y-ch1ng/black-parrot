@@ -90,7 +90,7 @@
   {                                                                                                      \
     logic [`BSG_SAFE_CLOG2(lce_assoc_mp)-1:0]    target_way_id;                                          \
     logic [lce_id_width_mp-1:0]                  target;                                                 \
-    logic [`bp_coh_bits-1:0]                     state;                                                  \
+    bp_coh_states_e                              state;                                                  \
     logic [`BSG_SAFE_CLOG2(lce_assoc_mp)-1:0]    way_id;                                                 \
     logic [paddr_width_mp-1:0]                   addr;                                                   \
     logic [cce_id_width_mp-1:0]                  src_id;                                                 \
@@ -294,7 +294,7 @@ typedef enum bit [2:0]
 
 `define bp_lce_cmd_header_width(cce_id_width_mp, lce_id_width_mp, lce_assoc_mp, paddr_width_mp)     \
   (cce_id_width_mp+$bits(bp_lce_cmd_type_e)+$bits(bp_lce_cce_data_length_e)+lce_id_width_mp         \
-   +paddr_width_mp+(2*`BSG_SAFE_CLOG2(lce_assoc_mp))+`bp_coh_bits+lce_id_width_mp)
+   +paddr_width_mp+(2*`BSG_SAFE_CLOG2(lce_assoc_mp))+$bits(bp_coh_states_e)+lce_id_width_mp)
 
 `define bp_lce_cce_resp_header_width(cce_id_width_mp, lce_id_width_mp, paddr_width_mp)              \
   (cce_id_width_mp+$bits(bp_lce_cce_resp_type_e)+$bits(bp_lce_cce_data_length_e)+lce_id_width_mp    \
