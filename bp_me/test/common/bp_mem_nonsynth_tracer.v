@@ -10,7 +10,7 @@ module bp_mem_nonsynth_tracer
   import bp_me_pkg::*;
   #(parameter bp_params_e bp_params_p = e_bp_inv_cfg
    `declare_bp_proc_params(bp_params_p)
-   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_max_assoc_p)
 
    , parameter trace_file_p = "dram.trace"
    )
@@ -27,7 +27,7 @@ module bp_mem_nonsynth_tracer
    , input                               mem_resp_ready_i
    );
 
-`declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+`declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_max_assoc_p)
 
 wire unused = &{mem_cmd_v_i, mem_resp_ready_i};
 
@@ -44,35 +44,35 @@ assign mem_resp_cast_i = mem_resp_i;
 
 always_ff @(posedge clk_i) begin
   if (mem_cmd_yumi_i)
-    case (mem_cmd_cast_i.msg_type)
+    case (mem_cmd_cast_i.header.msg_type)
       e_cce_mem_rd: 
-        $fwrite(file, "[%t] CMD RD: (%x) %b\n", $time, mem_cmd_cast_i.addr, mem_cmd_cast_i.size);
+        $fwrite(file, "[%t] CMD RD: (%x) %b\n", $time, mem_cmd_cast_i.header.addr, mem_cmd_cast_i.header.size);
       e_cce_mem_wr:
-        $fwrite(file, "[%t] CMD WR: (%x) %b\n", $time, mem_cmd_cast_i.addr, mem_cmd_cast_i.size);
+        $fwrite(file, "[%t] CMD WR: (%x) %b\n", $time, mem_cmd_cast_i.header.addr, mem_cmd_cast_i.header.size);
       e_cce_mem_uc_rd:
-        $fwrite(file, "[%t] CMD UCRD: (%x) %b\n", $time, mem_cmd_cast_i.addr, mem_cmd_cast_i.size);
+        $fwrite(file, "[%t] CMD UCRD: (%x) %b\n", $time, mem_cmd_cast_i.header.addr, mem_cmd_cast_i.header.size);
       e_cce_mem_uc_wr:
-        $fwrite(file, "[%t] CMD UCWR: (%x) %b %x\n", $time, mem_cmd_cast_i.addr, mem_cmd_cast_i.size, mem_cmd_cast_i.data);
+        $fwrite(file, "[%t] CMD UCWR: (%x) %b %x\n", $time, mem_cmd_cast_i.header.addr, mem_cmd_cast_i.header.size, mem_cmd_cast_i.data);
       e_cce_mem_wb:
-        $fwrite(file, "[%t] CMD WB: (%x) %b %x\n", $time, mem_cmd_cast_i.addr, mem_cmd_cast_i.size, mem_cmd_cast_i.data);
+        $fwrite(file, "[%t] CMD WB: (%x) %b %x\n", $time, mem_cmd_cast_i.header.addr, mem_cmd_cast_i.header.size, mem_cmd_cast_i.data);
       default: 
-        $fwrite(file, "[%t] CMD ERROR: unknown cmd_type %x received!", $time, mem_resp_cast_i.msg_type);
+        $fwrite(file, "[%t] CMD ERROR: unknown cmd_type %x received!", $time, mem_resp_cast_i.header.msg_type);
     endcase
 
   if (mem_resp_v_i)
-    case (mem_resp_cast_i.msg_type)
+    case (mem_resp_cast_i.header.msg_type)
       e_cce_mem_rd:
-        $fwrite(file, "[%t] RESP RD: (%x) %b %x\n", $time, mem_resp_cast_i.addr, mem_resp_cast_i.size, mem_resp_cast_i.data);
+        $fwrite(file, "[%t] RESP RD: (%x) %b %x\n", $time, mem_resp_cast_i.header.addr, mem_resp_cast_i.header.size, mem_resp_cast_i.data);
       e_cce_mem_wr:
-        $fwrite(file, "[%t] RESP WR: (%x) %b %x\n", $time, mem_resp_cast_i.addr, mem_resp_cast_i.size, mem_resp_cast_i.data);
+        $fwrite(file, "[%t] RESP WR: (%x) %b %x\n", $time, mem_resp_cast_i.header.addr, mem_resp_cast_i.header.size, mem_resp_cast_i.data);
       e_cce_mem_uc_rd:
-        $fwrite(file, "[%t] RESP UCRD: (%x) %b %x\n", $time, mem_resp_cast_i.addr, mem_resp_cast_i.size, mem_resp_cast_i.data);
+        $fwrite(file, "[%t] RESP UCRD: (%x) %b %x\n", $time, mem_resp_cast_i.header.addr, mem_resp_cast_i.header.size, mem_resp_cast_i.data);
       e_cce_mem_uc_wr:
-        $fwrite(file, "[%t] RESP UCWR: (%x) %b\n", $time, mem_resp_cast_i.addr, mem_resp_cast_i.size);
+        $fwrite(file, "[%t] RESP UCWR: (%x) %b\n", $time, mem_resp_cast_i.header.addr, mem_resp_cast_i.header.size);
       e_cce_mem_wb:
-        $fwrite(file, "[%t] RESP WB: (%x) %b\n", $time, mem_resp_cast_i.addr, mem_resp_cast_i.size);
+        $fwrite(file, "[%t] RESP WB: (%x) %b\n", $time, mem_resp_cast_i.header.addr, mem_resp_cast_i.header.size);
       default: 
-        $fwrite(file, "[%t] ERROR: unknown resp_type %x received!", $time, mem_resp_cast_i.msg_type);
+        $fwrite(file, "[%t] ERROR: unknown resp_type %x received!", $time, mem_resp_cast_i.header.msg_type);
     endcase
 end
 

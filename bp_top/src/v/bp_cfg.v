@@ -6,9 +6,10 @@ module bp_cfg
  import bp_common_rv64_pkg::*;
  import bp_cce_pkg::*;
  import bp_common_cfg_link_pkg::*;
+ import bp_me_pkg::*;
  #(parameter bp_params_e bp_params_p = e_bp_inv_cfg
    `declare_bp_proc_params(bp_params_p)
-   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_max_assoc_p)
 
    , localparam cfg_bus_width_lp = `bp_cfg_bus_width(vaddr_width_p, core_id_width_p, cce_id_width_p, lce_id_width_p, cce_pc_width_p, cce_instr_width_p)
    )
@@ -34,7 +35,7 @@ module bp_cfg
    );
 
 `declare_bp_cfg_bus_s(vaddr_width_p, core_id_width_p, cce_id_width_p, lce_id_width_p, cce_pc_width_p, cce_instr_width_p);
-`declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+`declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_max_assoc_p);
 
 bp_cfg_bus_s cfg_bus_cast_o;
 bp_cce_mem_msg_s mem_cmd_cast_i, mem_resp_cast_o;
@@ -78,9 +79,9 @@ bsg_dff_reset
 assign mem_cmd_yumi_o = mem_cmd_v_i & mem_resp_v_o;
 
 wire                        cfg_v_li    = mem_cmd_yumi_o;
-wire                        cfg_w_v_li  = cfg_v_li & (mem_cmd_cast_i.msg_type == e_cce_mem_uc_wr);
-wire                        cfg_r_v_li  = cfg_v_li & (mem_cmd_cast_i.msg_type == e_cce_mem_uc_rd);
-wire [cfg_addr_width_p-1:0] cfg_addr_li = mem_cmd_cast_i.addr[0+:cfg_addr_width_p];
+wire                        cfg_w_v_li  = cfg_v_li & (mem_cmd_cast_i.header.msg_type == e_cce_mem_uc_wr);
+wire                        cfg_r_v_li  = cfg_v_li & (mem_cmd_cast_i.header.msg_type == e_cce_mem_uc_rd);
+wire [cfg_addr_width_p-1:0] cfg_addr_li = mem_cmd_cast_i.header.addr[0+:cfg_addr_width_p];
 wire [cfg_data_width_p-1:0] cfg_data_li = mem_cmd_cast_i.data[0+:cfg_data_width_p];
 
 always_ff @(posedge clk_i)
@@ -191,10 +192,11 @@ assign cfg_bus_cast_o = '{freeze: freeze_r
                           };
 
 assign mem_resp_v_o    = mem_resp_ready_i & read_ready_r;
-assign mem_resp_cast_o = '{msg_type: mem_cmd_cast_i.msg_type
-                           ,addr   : mem_cmd_cast_i.addr
-                           ,payload: mem_cmd_cast_i.payload
-                           ,size   : mem_cmd_cast_i.size
+assign mem_resp_cast_o = '{header : '{msg_type: mem_cmd_cast_i.header.msg_type
+                                      ,addr   : mem_cmd_cast_i.header.addr
+                                      ,payload: mem_cmd_cast_i.header.payload
+                                      ,size   : mem_cmd_cast_i.header.size
+																			}
                            // TODO: Add all mode bits to mux
                            ,data   : irf_r_v_li 
                                      ? irf_data_i 

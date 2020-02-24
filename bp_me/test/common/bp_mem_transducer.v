@@ -9,7 +9,7 @@ module bp_mem_transducer
   import bp_me_pkg::*;
   #(parameter bp_params_e bp_params_p = e_bp_inv_cfg
    `declare_bp_proc_params(bp_params_p)
-   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_max_assoc_p)
 
    , parameter [paddr_width_p-1:0] dram_offset_p = '0
 
@@ -46,7 +46,7 @@ module bp_mem_transducer
    , output                              yumi_o
    );
 
-  `declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p);
+  `declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_max_assoc_p);
 
   bp_cce_mem_msg_s mem_cmd_cast_i, mem_resp_cast_o;
 
@@ -66,30 +66,31 @@ module bp_mem_transducer
      );
 
   // Only handle word aligned accesses
-  wire [cce_block_width_p-1:0]  wr_word_offset = mem_cmd_cast_i.addr[byte_offset_bits_lp+:word_offset_bits_lp];
-  wire [cce_block_width_p-1:0]  wr_byte_offset = mem_cmd_cast_i.addr[0+:byte_offset_bits_lp];
+  wire [cce_block_width_p-1:0]  wr_word_offset = mem_cmd_cast_i.header.addr[byte_offset_bits_lp+:word_offset_bits_lp];
+  wire [cce_block_width_p-1:0]  wr_byte_offset = mem_cmd_cast_i.header.addr[0+:byte_offset_bits_lp];
   wire [cce_block_width_p-1:0]    wr_bit_shift = wr_word_offset*dword_width_p + wr_byte_offset*8;
   wire [cce_block_width_p-1:0]   wr_byte_shift = wr_word_offset*num_word_bytes_lp + wr_byte_offset;
-  wire [cce_block_width_p-1:0]  rd_word_offset = mem_cmd_r.addr[byte_offset_bits_lp+:word_offset_bits_lp];
-  wire [cce_block_width_p-1:0]  rd_byte_offset = mem_cmd_r.addr[0+:byte_offset_bits_lp];
+  wire [cce_block_width_p-1:0]  rd_word_offset = mem_cmd_r.header.addr[byte_offset_bits_lp+:word_offset_bits_lp];
+  wire [cce_block_width_p-1:0]  rd_byte_offset = mem_cmd_r.header.addr[0+:byte_offset_bits_lp];
   wire [cce_block_width_p-1:0]    rd_bit_shift = rd_word_offset*dword_width_p; // We rely on receiver to adjust bits
   wire [cce_block_width_p-1:0]   rd_byte_shift = rd_word_offset*num_word_bytes_lp;
 
   assign v_o = mem_cmd_yumi_o;
-  assign w_o = v_o & (mem_cmd_cast_i.msg_type inside {e_cce_mem_uc_wr, e_cce_mem_wb});
-  assign addr_o = (((mem_cmd_cast_i.addr - dram_offset_p) >> block_offset_bits_lp) << block_offset_bits_lp);
+  assign w_o = v_o & (mem_cmd_cast_i.header.msg_type inside {e_cce_mem_uc_wr, e_cce_mem_wb});
+  assign addr_o = (((mem_cmd_cast_i.header.addr - dram_offset_p) >> block_offset_bits_lp) << block_offset_bits_lp);
   assign data_o = mem_cmd_cast_i.data << wr_bit_shift;
-  assign write_mask_o = ((1 << (1 << mem_cmd_cast_i.size)) - 1) << wr_byte_shift;
+  assign write_mask_o = ((1 << (1 << mem_cmd_cast_i.header.size)) - 1) << wr_byte_shift;
 
-  wire [cce_block_width_p-1:0] data_li = (mem_cmd_r.msg_type == e_cce_mem_uc_rd)
+  wire [cce_block_width_p-1:0] data_li = (mem_cmd_r.header.msg_type == e_cce_mem_uc_rd)
                                          ? data_i >> rd_bit_shift
                                          : data_i;
 
   assign mem_resp_cast_o = '{data     : data_li
-                             ,payload : mem_cmd_r.payload
-                             ,size    : mem_cmd_r.size
-                             ,addr    : mem_cmd_r.addr
-                             ,msg_type: mem_cmd_r.msg_type
+	                           ,header  : '{payload : mem_cmd_r.header.payload
+                                          ,size    : mem_cmd_r.header.size
+                                          ,addr    : mem_cmd_r.header.addr
+                                          ,msg_type: mem_cmd_r.header.msg_type
+																				 }
                              };
 
   assign mem_cmd_yumi_o = mem_cmd_v_i & ready_i;
