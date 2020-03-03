@@ -27,6 +27,7 @@ module testbench
    , parameter npc_trace_p                 = 0
    , parameter dcache_trace_p              = 0
    , parameter vm_trace_p                  = 0
+   , parameter bp_bpred_trace_p            = 0
    , parameter preload_mem_p               = 0
    , parameter skip_init_p                 = 0
 
@@ -206,6 +207,18 @@ bp_nonsynth_host
 
    ,.program_finish_o(program_finish_lo)
    );
+
+bind bp_fe_top
+    bp_bpred_tracer
+     #(.bp_params_p(bp_params_p))
+     pc_gen_tracer
+      (.clk_i(clk_i & (testbench.bp_bpred_trace_p == 1))
+       ,.reset_i(reset_i)
+       ,.is_br(pc_gen.is_br)
+       ,.br_target(pc_gen.br_target)
+       ,.ovr_taken(pc_gen.ovr_taken)
+       ,.ovr_ntaken(pc_gen.ovr_ntaken)
+       );
 
 bind bp_be_top
   bp_be_nonsynth_perf
