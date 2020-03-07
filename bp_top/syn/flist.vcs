@@ -30,6 +30,7 @@ $BP_COMMON_DIR/src/include/bp_common_cfg_link_pkg.vh
 # FE packages
 $BP_FE_DIR/src/include/bp_fe_icache_pkg.vh
 $BP_FE_DIR/src/include/bp_fe_pkg.vh
+$BP_FE_DIR/src/include/bp_bpred_tracer.v
 # BE packages
 $BP_BE_DIR/src/include/bp_be_pkg.vh
 $BP_BE_DIR/src/include/bp_be_dcache/bp_be_dcache_pkg.vh

@@ -213,7 +213,7 @@ bp_nonsynth_host
 
 `ifndef NO_MONITOR
 
-/*bind bp_fe_top
+bind bp_fe_top
     bp_bpred_tracer
      #(.bp_params_p(bp_params_p))
      pc_gen_tracer
@@ -224,7 +224,7 @@ bp_nonsynth_host
        ,.ovr_taken(pc_gen.ovr_taken)
        ,.ovr_ntaken(pc_gen.ovr_ntaken)
        );
-*/
+
 bind bp_be_top
   bp_nonsynth_commit_tracer
    #(.bp_params_p(bp_params_p))
