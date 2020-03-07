@@ -215,7 +215,9 @@ bp_nonsynth_host
 
 bind bp_fe_top
     bp_bpred_tracer
-     #(.bp_params_p(bp_params_p))
+     #(.bp_params_p(bp_params_p)
+      ,.debug_type_tracer_p(1)
+      ,.delimiter_excel_p(1))
      pc_gen_tracer
       (.clk_i(clk_i & (testbench.bp_bpred_trace_p == 1))
        ,.reset_i(reset_i)
@@ -223,6 +225,9 @@ bind bp_fe_top
        ,.br_target(pc_gen.br_target)
        ,.ovr_taken(pc_gen.ovr_taken)
        ,.ovr_ntaken(pc_gen.ovr_ntaken)
+       ,.correct_i(pc_gen.bp_fe_bht.correct_i)
+       ,.w_v_i(pc_gen.bp_fe_bht.w_v_i)
+       ,.idx_w_i(pc_gen.bp_fe_bht.idx_w_i)
        );
 
 bind bp_be_top

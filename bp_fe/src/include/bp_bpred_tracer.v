@@ -6,6 +6,8 @@ module bp_bpred_tracer
   `declare_bp_proc_params(bp_params_p)
 
     , parameter trace_file_p = "branch_predict"
+    , parameter debug_type_tracer_p = 1
+    , parameter delimiter_excel_p = 1
     )
    (  input                     clk_i
     , input                     reset_i
@@ -13,6 +15,9 @@ module bp_bpred_tracer
     , input [vaddr_width_p-1:0] br_target                                  
     , input                     ovr_taken
     , input                     ovr_ntaken
+    , input                     correct_i
+    , input                     w_v_i
+    , input [bht_idx_width_p-1:0] idx_w_i
     );
 
   string file_name;
@@ -25,10 +30,27 @@ module bp_bpred_tracer
     end
 
   always_ff @(negedge clk_i)
-    if (is_br)
-      begin
-        $fwrite(file, " [br_target] = %x [ovr_taken] = %x [ovr_ntaken] = %x ", br_target, ovr_taken, ovr_ntaken);
-        $fwrite(file, "\n");
-      end
+    begin
+      if(debug_type_tracer_p) begin
+        if (w_v_i)
+          begin
+            if(delimiter_excel_p) begin
+              $fwrite(file, "%x;%x", idx_w_i, correct_i);
+              $fwrite(file, "\n");  
+            end
+            else begin
+              $fwrite(file, " [idx_w_i] = %x [correct_i] = %x ", idx_w_i, correct_i);
+              $fwrite(file, "\n");
+            end
+          end
+        end
+      else begin
+        if (is_br)
+          begin
+            $fwrite(file, " [br_target] = %x [ovr_taken] = %x [ovr_ntaken] = %x ", br_target, ovr_taken, ovr_ntaken);
+            $fwrite(file, "\n");
+          end
+        end
+    end
 
 endmodule
