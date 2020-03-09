@@ -14,6 +14,7 @@ module bp_fe_bht
 
    , localparam els_lp             = 2**bht_idx_width_p
    , localparam saturation_size_lp = 2
+   , localparam concat_idx_lp      = 2
    )
   (input                         clk_i
    , input                       reset_i
@@ -28,26 +29,35 @@ module bp_fe_bht
    );
 
 logic [els_lp-1:0][saturation_size_lp-1:0] mem;
+logic [concat_idx_lp-1:0] branch_history;
+logic [bht_idx_width_p-1:0] g_shared_idx_r;
+logic [bht_idx_width_p-1:0] g_shared_idx_w;
 
-assign predict_o = r_v_i ? mem[idx_r_i][1] : 1'b0;
+assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history};
+assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history}; 
+
+assign predict_o = r_v_i ? mem[g_shared_idx_r][1] : 1'b0;
 
 always_ff @(posedge clk_i) 
-  if (reset_i) 
+  if (reset_i) begin
     mem <= '{default:2'b01};
+    branch_history <= '0;
+  end
   else if (w_v_i) 
     begin
+      branch_history <= (branch_history << 1) + correct_i; 
       //2-bit saturating counter(high_bit:prediction direction,low_bit:strong/weak prediction)
-      case ({correct_i, mem[idx_w_i][1], mem[idx_w_i][0]})
+      case ({correct_i, mem[g_shared_idx_w][1], mem[g_shared_idx_w][0]})
         //wrong prediction
-        3'b000: mem[idx_w_i] <= {mem[idx_w_i][1]^mem[idx_w_i][0], 1'b1};//2'b01
-        3'b001: mem[idx_w_i] <= {mem[idx_w_i][1]^mem[idx_w_i][0], 1'b1};//2'b11
-        3'b010: mem[idx_w_i] <= {mem[idx_w_i][1]^mem[idx_w_i][0], 1'b1};//2'b11
-        3'b011: mem[idx_w_i] <= {mem[idx_w_i][1]^mem[idx_w_i][0], 1'b1};//2'b01
+        3'b000: mem[g_shared_idx_w] <= {mem[g_shared_idx_w][1]^mem[g_shared_idx_w][0], 1'b1};//2'b01
+        3'b001: mem[g_shared_idx_w] <= {mem[g_shared_idx_w][1]^mem[g_shared_idx_w][0], 1'b1};//2'b11
+        3'b010: mem[g_shared_idx_w] <= {mem[g_shared_idx_w][1]^mem[g_shared_idx_w][0], 1'b1};//2'b11
+        3'b011: mem[g_shared_idx_w] <= {mem[g_shared_idx_w][1]^mem[g_shared_idx_w][0], 1'b1};//2'b01
         //correct prediction
-        3'b100: mem[idx_w_i] <= mem[idx_w_i];//2'b00
-        3'b101: mem[idx_w_i] <= {mem[idx_w_i][1], ~mem[idx_w_i][0]};//2'b00
-        3'b110: mem[idx_w_i] <= mem[idx_w_i];//2'b10
-        3'b111: mem[idx_w_i] <= {mem[idx_w_i][1], ~mem[idx_w_i][0]};//2'b10
+        3'b100: mem[g_shared_idx_w] <= mem[g_shared_idx_w];//2'b00
+        3'b101: mem[g_shared_idx_w] <= {mem[g_shared_idx_w][1], ~mem[g_shared_idx_w][0]};//2'b00
+        3'b110: mem[g_shared_idx_w] <= mem[g_shared_idx_w];//2'b10
+        3'b111: mem[g_shared_idx_w] <= {mem[g_shared_idx_w][1], ~mem[g_shared_idx_w][0]};//2'b10
       endcase
     end
 
