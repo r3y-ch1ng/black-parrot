@@ -29,12 +29,20 @@ module bp_fe_bht
    );
 
 logic [els_lp-1:0][saturation_size_lp-1:0] mem;
-logic [concat_idx_lp-1:0] branch_history;
+logic [bht_idx_width_p-1:0] branch_history;
 logic [bht_idx_width_p-1:0] g_shared_idx_r;
 logic [bht_idx_width_p-1:0] g_shared_idx_w;
 
-assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history};
-assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history}; 
+// gshare indices
+assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-1-concat_idx_lp],idx_r_i[0+:(bht_idx_width_p-concat_idx_lp-1)] ^ branch_history[0+:(bht_idx_width_p-concat_idx_lp-1)]};
+assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-1-concat_idx_lp],idx_w_i[0+:(bht_idx_width_p-concat_idx_lp-1)] ^ branch_history[0+:(bht_idx_width_p-concat_idx_lp-1)]}; 
+
+// assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-1-concat_idx_lp],branch_history[0+:(bht_idx_width_p-concat_idx_lp-1)]}; 
+// assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-1-concat_idx_lp],branch_history[0+:(bht_idx_width_p-concat_idx_lp-1)]}; 
+
+// pure concatenation 
+// assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history};
+// assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history}; 
 
 assign predict_o = r_v_i ? mem[g_shared_idx_r][1] : 1'b0;
 
@@ -45,7 +53,7 @@ always_ff @(posedge clk_i)
   end
   else if (w_v_i) 
     begin
-      branch_history <= (branch_history << 1) + correct_i; 
+      branch_history <= (branch_history << 1) | correct_i; 
       //2-bit saturating counter(high_bit:prediction direction,low_bit:strong/weak prediction)
       case ({correct_i, mem[g_shared_idx_w][1], mem[g_shared_idx_w][0]})
         //wrong prediction
