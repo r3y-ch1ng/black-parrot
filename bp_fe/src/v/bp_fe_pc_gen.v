@@ -290,6 +290,7 @@ bp_fe_bht
    ,.w_v_i((br_res_v | attaboy_v) & fe_cmd_yumi_o)
    ,.idx_w_i(fe_cmd_branch_metadata.bht_idx)
    ,.correct_i(attaboy_v)
+   ,.pred_taken_i(fe_cmd_branch_metadata.pred_taken)
    );
 
 `declare_bp_fe_instr_scan_s(vaddr_width_p)
