@@ -35,11 +35,11 @@ logic [bht_idx_width_p-1:0] g_shared_idx_r;
 logic [bht_idx_width_p-1:0] g_shared_idx_w;
 logic hist_update_bit;
 
-assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_r_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
-assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_w_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
+//assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_r_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
+//assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_w_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
 
-//assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
-//assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
+assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
+assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
 
 assign hist_update_bit = w_v_i ? (pred_taken_i & correct_i) : 1'b0;
 
