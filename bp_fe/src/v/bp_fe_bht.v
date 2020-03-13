@@ -14,7 +14,7 @@ module bp_fe_bht
 
    , localparam els_lp             = 2**bht_idx_width_p
    , localparam saturation_size_lp = 2
-   , localparam concat_idx_lp      = 5
+   , localparam concat_idx_lp      = 2
    )
   (input                         clk_i
    , input                       reset_i
