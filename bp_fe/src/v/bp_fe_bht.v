@@ -30,16 +30,16 @@ module bp_fe_bht
    );
 
 logic [els_lp-1:0][saturation_size_lp-1:0] mem;
-logic [bht_idx_width_p-1:0] branch_history;
+logic [concat_idx_lp-1:0] branch_history;
 logic [bht_idx_width_p-1:0] g_shared_idx_r;
 logic [bht_idx_width_p-1:0] g_shared_idx_w;
 logic hist_update_bit;
 
-assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_r_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
-assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_w_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
+// XORing the first 'N' bits from LSB of branch address index and global history
+// 'N' is defined by the localparam 'concat_idx_lp'
 
-//assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
-//assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
+assign g_shared_idx_r = idx_r_i^branch_history;
+assign g_shared_idx_w = idx_w_i^branch_history;
 
 assign hist_update_bit = w_v_i ? (pred_taken_i & correct_i) : 1'b0;
 
@@ -52,7 +52,7 @@ always_ff @(posedge clk_i)
   end
   else if (w_v_i) 
     begin
-      branch_history <= (branch_history << 1) | hist_update_bit;
+      branch_history <= (branch_history << 1) | hist_update_bit; // branch history register updation
       //2-bit saturating counter(high_bit:prediction direction,low_bit:strong/weak prediction)
       case ({correct_i, mem[g_shared_idx_w][1], mem[g_shared_idx_w][0]})
         //wrong prediction
