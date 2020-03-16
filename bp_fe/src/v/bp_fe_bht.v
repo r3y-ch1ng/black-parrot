@@ -27,7 +27,7 @@ module bp_fe_bht
    );
 
 logic [els_lp-1:0][saturation_size_lp-1:0] mem;
-logic [bht_idx_width_p-1:0] branch_history;
+logic [concat_idx_lp-1:0] branch_history;
 logic [bht_idx_width_p-1:0] g_shared_idx_r;
 logic [bht_idx_width_p-1:0] g_shared_idx_w;
 logic hist_update_bit;
@@ -35,8 +35,11 @@ logic hist_update_bit;
 //assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_r_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
 //assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],idx_w_i[0+:concat_idx_lp]^branch_history[0+:concat_idx_lp]};
 
-assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
-assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
+assign g_shared_idx_r = idx_r_i ^ branch_history;
+assign g_shared_idx_w = idx_w_i ^ branch_history;
+
+//assign g_shared_idx_r = {idx_r_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
+//assign g_shared_idx_w = {idx_w_i[(bht_idx_width_p-1) -: bht_idx_width_p-concat_idx_lp],branch_history[0+:concat_idx_lp]};
 
 assign hist_update_bit = w_v_i ? (correct_i ~^ pred_taken_i) : 1'b0;
 
