@@ -6,8 +6,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time             13270000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 13270000 ps
-CPU Time:      7.210 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:09:00 2020
+CPU Time:      1.870 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:15:21 2020
 
 fibcall
 ==========
@@ -17,8 +17,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time             29070000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 29070000 ps
-CPU Time:     15.100 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:09:40 2020
+CPU Time:      2.260 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:15:24 2020
 
 median
 ==========
@@ -28,8 +28,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time            229440000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 229440000 ps
-CPU Time:    135.020 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:13:24 2020
+CPU Time:      7.860 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:15:40 2020
 
 rv64ui-p-blt
 ==========
@@ -39,8 +39,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time              9900000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 9900000 ps
-CPU Time:      6.840 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:13:34 2020
+CPU Time:      1.730 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:15:43 2020
 
 rv64ui-p-bge
 ==========
@@ -50,8 +50,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time             10690000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 10690000 ps
-CPU Time:      6.570 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:13:50 2020
+CPU Time:      1.770 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:15:46 2020
 
 rv64ui-p-bgeu
 ==========
@@ -61,8 +61,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time             12410000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 12410000 ps
-CPU Time:      6.240 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:13:58 2020
+CPU Time:      1.790 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:16:05 2020
 
 rv64ui-p-bltu
 ==========
@@ -72,8 +72,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time             11740000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 11740000 ps
-CPU Time:      6.030 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:14:07 2020
+CPU Time:      1.760 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:16:08 2020
 
 rv64ui-p-bne
 ==========
@@ -83,8 +83,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time             10010000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 10010000 ps
-CPU Time:      4.740 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:14:18 2020
+CPU Time:      1.720 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:16:13 2020
 
 rv64ui-p-beq
 ==========
@@ -94,8 +94,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time              9900000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 9900000 ps
-CPU Time:      4.900 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:14:26 2020
+CPU Time:      1.750 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:16:16 2020
 
 towers
 ==========
@@ -105,8 +105,8 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time            166430000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 166430000 ps
-CPU Time:    108.910 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:16:48 2020
+CPU Time:      6.060 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:16:23 2020
 
 vvadd
 ==========
@@ -116,6 +116,6 @@ $finish called from file "/home/reyc2/final_project/black-parrot/bp_top/test/com
 $finish at simulation time            103570000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 103570000 ps
-CPU Time:     59.850 seconds;       Data structure size:  36.0Mb
-Wed Mar 18 20:17:57 2020
+CPU Time:      4.250 seconds;       Data structure size:  15.9Mb
+Wed Mar 18 21:16:29 2020
 
